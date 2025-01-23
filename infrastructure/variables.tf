@@ -7,7 +7,7 @@ variable "region" {
 variable "ecs_cluster_name" {
   description = "ECS cluster name"
   type = string
-  default = rosa-test
+  default = "rosa-test"
 }
 
 variable "private_subnet_count" {
