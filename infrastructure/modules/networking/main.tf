@@ -56,7 +56,7 @@ resource "aws_eip" "main" {
 #create nat gatway if private subnets are enabled
 resource "aws_nat_gateway" "main" {
   count         = var.enable_private_networking ? 1 : 0
-  allocation_id = aws_eip.main.id
+  allocation_id = aws_eip.main[0].id
   subnet_id     = aws_subnet.public[0].id
   tags          = { 
     Name = "${var.ecs_cluster_name}-nat" 

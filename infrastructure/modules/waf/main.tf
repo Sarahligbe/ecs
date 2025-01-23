@@ -7,12 +7,36 @@ resource "aws_wafv2_web_acl" "app_waf" {
     allow {}
   }
 
+  # First Layer: CAPTCHA Challenge for Moderate Traffic
   rule {
-    name     = "RateLimitRule"
+    name     = "CaptchaRule"
     priority = 1
 
-    override_action {
-      none {}
+    action {
+      captcha {}
+    }
+
+    statement {
+      rate_based_statement {
+        limit              = var.captcha_limit
+        aggregate_key_type = "IP"
+      }
+    }
+
+    visibility_config {
+      cloudwatch_metrics_enabled = true
+      metric_name                = "CaptchaMetric"
+      sampled_requests_enabled   = true
+    }
+  }
+
+  # Second Layer: Block Excessive Traffic
+  rule {
+    name     = "BlockRule"
+    priority = 2
+
+    action {
+      block {}
     }
 
     statement {
@@ -24,45 +48,15 @@ resource "aws_wafv2_web_acl" "app_waf" {
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name               = "RateLimitMetric"
-      sampled_requests_enabled  = true
-    }
-  }
-
-  rule {
-    name     = "CaptchaRule"
-    priority = 2
-
-    override_action {
-      none {}
-    }
-
-    statement {
-      and_statement {
-        statement {
-          rate_based_statement {
-            limit              = var.captcha_limit
-            aggregate_key_type = "IP"
-          }
-        }
-      }
-    }
-
-    action {
-      challenge {}
-    }
-
-    visibility_config {
-      cloudwatch_metrics_enabled = true
-      metric_name               = "CaptchaMetric"
-      sampled_requests_enabled  = true
+      metric_name                = "BlockMetric"
+      sampled_requests_enabled   = true
     }
   }
 
   visibility_config {
     cloudwatch_metrics_enabled = true
-    metric_name               = "${var.ecs_cluster_name}WAFMetrics"
-    sampled_requests_enabled  = true
+    metric_name                = "${var.ecs_cluster_name}WAFMetrics"
+    sampled_requests_enabled   = true
   }
 }
 
@@ -78,5 +72,5 @@ resource "aws_cloudwatch_log_group" "waf_log_group" {
 
 resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
   log_destination_configs = [aws_cloudwatch_log_group.waf_log_group.arn]
-  resource_arn           = aws_wafv2_web_acl.app_waf.arn
+  resource_arn            = aws_wafv2_web_acl.app_waf.arn
 }

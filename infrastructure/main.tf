@@ -18,7 +18,7 @@ module "ecs" {
   source                = "./modules/ecs"
   ecs_cluster_name = var.ecs_cluster_name
   vpc_id = module.networking.vpc_id
-  use_public_ip = module.networking.enable_private_networking
+  use_public_ip = module.networking.use_public_ip
   subnet_ids = module.networking.subnet_ids
   alb_sg_id = module.alb.alb_sg_id
   target_group_arn     = module.alb.target_group_arn
