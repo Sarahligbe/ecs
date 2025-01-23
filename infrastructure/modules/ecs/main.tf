@@ -51,7 +51,7 @@ resource "aws_ecs_cluster" "app_cluster" {
 
 # Define the ECS task definition
 resource "aws_ecs_task_definition" "app" {
-  family                   = "app"
+  family                   = "${var.ecs_cluster_name}-task-definition"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   cpu                      = "256"
@@ -95,15 +95,15 @@ resource "aws_ecs_service" "app_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = var.private_subnet_ids
-    assign_public_ip = false  
+    subnets          = var.subnet_ids
+    assign_public_ip = var.use_public_ip  
     security_groups  = [aws_security_group.ecs_tasks_sg.id]
   }
 
   desired_count = 1
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.app_tg.arn
+    target_group_arn = var.target_group_arn
     container_name   = "app"
     container_port   = 80
   }

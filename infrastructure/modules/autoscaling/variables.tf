@@ -24,3 +24,8 @@ variable "alb_arn_suffix" {
   description = "ARN suffix of the ALB"
   type        = string
 }
+
+variable "alb_tg_arn_suffix" {
+  description = "ARN suffix of the ALB Target group"
+  type        = string
+}

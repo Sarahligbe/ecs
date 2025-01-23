@@ -9,6 +9,12 @@ variable "vpc_cidr_block" {
   default     = "172.19.0.0/16"
 }
 
+variable "enable_private_networking" {
+  description = "Enable private subnets and NAT Gateway for ECS"
+  type        = bool
+  default     = false
+}
+
 variable "private_subnet_count" {
   description = "Number of private subnets to create"
   type        = number
