@@ -37,7 +37,7 @@ resource "aws_appautoscaling_policy" "ecs_memory_policy" {
 }
 
 resource "aws_appautoscaling_policy" "ecs_request_policy" {
-  name               = "${var.name_prefix}-request-policy"
+  name               = "${var.ecs_cluster_name}-request-policy"
   policy_type        = "TargetTrackingScaling"
   resource_id        = aws_appautoscaling_target.ecs_target.resource_id
   scalable_dimension = aws_appautoscaling_target.ecs_target.scalable_dimension
