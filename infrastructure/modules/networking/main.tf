@@ -12,7 +12,7 @@ resource "aws_vpc" "main" {
 
 #create the private subnets
 resource "aws_subnet" "private" {
-  count             = var.private_subnet_count
+  count          = var.enable_private_networking ? var.private_subnet_count : 0
   vpc_id            = aws_vpc.main.id
   cidr_block        = cidrsubnet(var.vpc_cidr_block, 8, count.index)
   availability_zone = data.aws_availability_zones.available.names[count.index % length(data.aws_availability_zones.available.names)]

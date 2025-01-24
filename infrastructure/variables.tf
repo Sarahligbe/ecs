@@ -39,3 +39,15 @@ variable "max_capacity" {
   type        = number
   default     = 5
 }
+
+variable "rate_limit" {
+  description = "Number of requests allowed per 5 minutes per IP"
+  type        = number
+  default     = 2000
+}
+
+variable "captcha_limit" {
+  description = "Number of requests before CAPTCHA challenge"
+  type        = number
+  default     = 100
+}

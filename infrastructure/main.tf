@@ -4,7 +4,7 @@ module "networking" {
   vpc_cidr_block         = var.vpc_cidr_block
   private_subnet_count   = var.private_subnet_count
   public_subnet_count    = var.public_subnet_count
-  enable_private_networking = true
+  enable_private_networking = true          # Toggle private subnet setup
 }
 
 module "alb" {
@@ -38,4 +38,6 @@ module "waf" {
   source      = "./modules/waf"
   ecs_cluster_name = var.ecs_cluster_name
   alb_arn     = module.alb.alb_arn
+  captcha_limit = var.captcha_limit
+  rate_limit = var.rate_limit
 }
