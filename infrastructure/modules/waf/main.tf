@@ -70,49 +70,27 @@ resource "aws_cloudwatch_log_group" "waf_log_group" {
   retention_in_days = 30
 }
 
-resource "aws_iam_role" "waf_logging" {
-  name = "waf_logging"
-
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "waf.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
-}
-EOF
-}
-
-resource "aws_iam_role_policy" "waf_logging" {
-  name = "waf_logging"
-  role = aws_iam_role.waf_logging.id
-
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": [
-        "logs:CreateLogGroup",
+resource "aws_cloudwatch_log_resource_policy" "waf_logging" {
+  policy_name     = "waf-logging-${var.ecs_cluster_name}"
+  policy_document = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Effect = "Allow"
+      Principal = {
+        Service = "delivery.logs.amazonaws.com"
+      }
+      Action = [
         "logs:CreateLogStream",
         "logs:PutLogEvents"
-      ],
-      "Effect": "Allow",
-      "Resource": "${aws_cloudwatch_log_group.waf_log_group.arn}:*"
-    }
-  ]
-}
-EOF
+      ]
+      Resource = "${aws_cloudwatch_log_group.waf_log_group.arn}:*"
+    }]
+  })
 }
 
 resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
-  log_destination_configs = [aws_cloudwatch_log_group.waf_log_group.arn]
-  resource_arn            = aws_wafv2_web_acl.app_waf.arn
+  log_destination_configs = ["${aws_cloudwatch_log_group.waf_log_group.arn}:*"]
+  resource_arn           = aws_wafv2_web_acl.app_waf.arn
+
+  depends_on = [aws_cloudwatch_log_resource_policy.waf_logging]
 }
