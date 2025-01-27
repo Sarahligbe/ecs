@@ -66,12 +66,12 @@ resource "aws_wafv2_web_acl_association" "app_waf_alb" {
 }
 
 resource "aws_cloudwatch_log_group" "waf_log_group" {
-  name              = "${var.ecs_cluster_name}-waf"
+  name              = "aws-waf-logs-${var.ecs_cluster_name}"
   retention_in_days = 30
 }
 
 resource "aws_cloudwatch_log_resource_policy" "waf_logging" {
-  policy_name     = "waf-logging-${var.ecs_cluster_name}"
+  policy_name     = "webacl-policy-${var.ecs_cluster_name}"
   policy_document = jsonencode({
     Version = "2012-10-17"
     Statement = [{
