@@ -66,7 +66,7 @@ resource "aws_wafv2_web_acl_association" "app_waf_alb" {
 }
 
 resource "aws_cloudwatch_log_group" "waf_log_group" {
-  name              = "/aws/waf/${var.ecs_cluster_name}"
+  name              = "${var.ecs_cluster_name}-waf"
   retention_in_days = 30
 }
 
@@ -89,7 +89,7 @@ resource "aws_cloudwatch_log_resource_policy" "waf_logging" {
 }
 
 resource "aws_wafv2_web_acl_logging_configuration" "waf_logging" {
-  log_destination_configs = ["${aws_cloudwatch_log_group.waf_log_group.arn}:*"]
+  log_destination_configs = [aws_cloudwatch_log_group.waf_log_group.arn]
   resource_arn           = aws_wafv2_web_acl.app_waf.arn
 
   depends_on = [aws_cloudwatch_log_resource_policy.waf_logging]
