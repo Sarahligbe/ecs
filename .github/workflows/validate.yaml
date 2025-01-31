@@ -1,0 +1,30 @@
+name: Terraform Validate
+
+on:
+  pull_request:
+    branches: 
+      - main
+
+jobs:
+  validate: 
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.3"
+
+      - name: Run terraform init
+        id: init
+        run: |
+          cd infrastructure
+          terraform init
+
+      - name: Run terraform validate
+        id: validate
+        run: |
+          cd infrastructure
+          terraform validate
