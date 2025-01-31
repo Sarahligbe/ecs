@@ -1,7 +1,7 @@
 module "networking" {
   source              = "./modules/networking"
   ecs_cluster_name       = var.ecs_cluster_name
-  vpc_cidr_block         = var.vpc_cidr_block
+  vpc_cidr_block         = var.vpc_cidr_blocks
   private_subnet_count   = var.private_subnet_count
   public_subnet_count    = var.public_subnet_count
   enable_private_networking = true          # Toggle private subnet setup
